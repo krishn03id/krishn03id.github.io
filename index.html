@@ -1,102 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced File Saver</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: #333;
-    }
-    #login {
-      margin: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #4285F4;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #fileUpload {
-      display: none;
-      margin-top: 20px;
-    }
-    #uploadStatus {
-      margin-top: 20px;
-      color: green;
-    }
-  </style>
-  <script src="https://apis.google.com/js/api.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive File Storage</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4e4e4e, #f2f2f2);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-box button {
+            background-color: #4285F4;
+            border: none;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .home-page {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-list button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #34A853;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 30px;
+        }
+    </style>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
+
 <body>
 
-  <h1>Advanced File Saver</h1>
-  <button id="login">Login with Google</button>
-  <input type="file" id="fileUpload">
-  <p id="uploadStatus"></p>
+    <div class="container">
+        <div class="login-box" id="login-box">
+            <button id="login-btn">Login with Google</button>
+        </div>
+        <div class="home-page" id="home-page">
+            <h2>Welcome to File Storage</h2>
+            <button id="connect-drive">Connect to Google Drive</button>
+            <div class="file-list" id="file-list"></div>
+        </div>
+    </div>
 
-  <script>
-    let GoogleAuth;
+    <script>
+        let userAuthToken;
+        let gapiClient;
 
-    function initClient() {
-      gapi.load('client:auth2', () => {
-        gapi.client.init({
-          apiKey: 'AIzaSyDe5E6y-kGMU4c_3FVoHRINOUBb_aRl2Lk',
-          clientId: '311050151646-eeakd0duojqe4cb2hcckek3bfovp710m.apps.googleusercontent.com',
-          scope: 'https://www.googleapis.com/auth/drive.file',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-        }).then(() => {
-          GoogleAuth = gapi.auth2.getAuthInstance();
-          document.getElementById('login').addEventListener('click', handleAuthClick);
-          document.getElementById('fileUpload').addEventListener('change', handleFileUpload);
-        });
-      });
-    }
+        // Initialize the Google API Client
+        function initClient() {
+            gapi.client.init({
+                apiKey: 'AIzaSyDe5E6y-kGMU4c_3FVoHRINOUBb_aRl2Lk', 
+                clientId: '311050151646-eeakd0duojqe4cb2hcckek3bfovp710m.apps.googleusercontent.com',
+                scope: 'https://www.googleapis.com/auth/drive.readonly',
+                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+            }).then(function () {
+                // Listen for sign-in state changes
+                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+            });
+        }
 
-    function handleAuthClick() {
-      GoogleAuth.signIn().then(() => {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('fileUpload').style.display = 'block';
-      });
-    }
+        // Sign In
+        function handleAuthClick() {
+            gapi.auth2.getAuthInstance().signIn();
+        }
 
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      const metadata = {
-        name: file.name,
-        mimeType: file.type,
-      };
+        // Update the UI based on sign-in state
+        function updateSigninStatus(isSignedIn) {
+            if (isSignedIn) {
+                // Show Home page
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('home-page').style.display = 'block';
+                userAuthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+            }
+        }
 
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', file);
+        // Connect to Google Drive
+        function connectToDrive() {
+            gapi.client.drive.files.list({
+                pageSize: 10,
+                fields: "nextPageToken, files(id, name)"
+            }).then(function (response) {
+                const files = response.result.files;
+                const fileListDiv = document.getElementById('file-list');
+                fileListDiv.innerHTML = '';
+                if (files && files.length > 0) {
+                    files.forEach(function (file) {
+                        const fileItem = document.createElement('div');
+                        fileItem.innerHTML = `<p>${file.name}</p><button onclick="viewFile('${file.id}')">View</button>`;
+                        fileListDiv.appendChild(fileItem);
+                    });
+                } else {
+                    fileListDiv.innerHTML = 'No files found in your Google Drive.';
+                }
+            });
+        }
 
-      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GoogleAuth.currentUser.get().getAuthResponse().access_token}`,
-        },
-        body: form,
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('uploadStatus').textContent = `File uploaded: ${data.name}`;
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('uploadStatus').textContent = 'Upload failed';
-      });
-    }
+        // View the file (PDF viewer)
+        function viewFile(fileId) {
+            const fileURL = `https://drive.google.com/file/d/${fileId}/preview`;
+            const iframe = document.createElement('iframe');
+            iframe.src = fileURL;
+            document.body.appendChild(iframe);
+        }
 
-    initClient();
-  </script>
+        // Load the API client
+        function loadAuthClient() {
+            gapi.load('client:auth2', initClient);
+        }
+
+        // Event Listeners
+        document.getElementById('login-btn').addEventListener('click', handleAuthClick);
+        document.getElementById('connect-drive').addEventListener('click', connectToDrive);
+
+        // Load the client when page is ready
+        window.onload = loadAuthClient;
+    </script>
 
 </body>
+
 </html>
