@@ -3,177 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Your advanced website template">
-  <title>Advanced Website</title>
-  <link rel="stylesheet" href="styles.css"> <!-- External CSS file -->
+  <title>Advanced File Saver</title>
   <style>
-    /* Basic Reset */
-    body, h1, h2, h3, p, ul, li, a {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
       font-family: Arial, sans-serif;
-      line-height: 1.6;
       background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
       color: #333;
     }
-
-    /* Header Styles */
-    header {
-      background: #333;
-      color: #fff;
-      padding: 1rem 0;
-      text-align: center;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-    }
-
-    nav a {
+    #login {
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #4285F4;
       color: white;
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-      color: #ffa500;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 2rem;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      color: white;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-    }
-
-    /* Section Styles */
-    .container {
-      padding: 2rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: white;
+      border: none;
       border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    #fileUpload {
+      display: none;
+      margin-top: 20px;
     }
-
-    .card img {
-      width: 100%;
-      height: auto;
-    }
-
-    .card-content {
-      padding: 1rem;
-    }
-
-    .card-content h3 {
-      margin-bottom: 0.5rem;
-    }
-
-    .card-content p {
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    /* Footer Styles */
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #333;
-      color: white;
-      margin-top: 2rem;
-    }
-
-    footer a {
-      color: #ffa500;
-      text-decoration: none;
+    #uploadStatus {
+      margin-top: 20px;
+      color: green;
     }
   </style>
+  <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1>My Advanced Website</h1>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <h1>Advanced File Saver</h1>
+  <button id="login">Login with Google</button>
+  <input type="file" id="fileUpload">
+  <p id="uploadStatus"></p>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>Welcome to My Website</h1>
-    <p>Your one-stop solution for all things web development!</p>
-  </section>
+  <script>
+    let GoogleAuth;
 
-  <!-- Main Content -->
-  <div class="container">
-    <h2 id="about">About Us</h2>
-    <p>We specialize in creating modern and responsive websites tailored to your needs.</p>
+    function initClient() {
+      gapi.load('client:auth2', () => {
+        gapi.client.init({
+          apiKey: 'AIzaSyDe5E6y-kGMU4c_3FVoHRINOUBb_aRl2Lk',
+          clientId: '311050151646-eeakd0duojqe4cb2hcckek3bfovp710m.apps.googleusercontent.com',
+          scope: 'https://www.googleapis.com/auth/drive.file',
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+        }).then(() => {
+          GoogleAuth = gapi.auth2.getAuthInstance();
+          document.getElementById('login').addEventListener('click', handleAuthClick);
+          document.getElementById('fileUpload').addEventListener('change', handleFileUpload);
+        });
+      });
+    }
 
-    <h2 id="services">Our Services</h2>
-    <div class="grid">
-      <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="Service 1">
-        <div class="card-content">
-          <h3>Web Design</h3>
-          <p>Beautiful and functional designs for your business.</p>
-        </div>
-      </div>
+    function handleAuthClick() {
+      GoogleAuth.signIn().then(() => {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('fileUpload').style.display = 'block';
+      });
+    }
 
-      <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="Service 2">
-        <div class="card-content">
-          <h3>SEO Optimization</h3>
-          <p>Boost your website's visibility on search engines.</p>
-        </div>
-      </div>
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      const metadata = {
+        name: file.name,
+        mimeType: file.type,
+      };
 
-      <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="Service 3">
-        <div class="card-content">
-          <h3>E-commerce Solutions</h3>
-          <p>Custom online stores to grow your business.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', file);
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 My Advanced Website | <a href="#contact">Contact Us</a></p>
-  </footer>
+      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GoogleAuth.currentUser.get().getAuthResponse().access_token}`,
+        },
+        body: form,
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('uploadStatus').textContent = `File uploaded: ${data.name}`;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('uploadStatus').textContent = 'Upload failed';
+      });
+    }
+
+    initClient();
+  </script>
 
 </body>
 </html>
