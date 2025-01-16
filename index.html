@@ -1,166 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Drive File Storage</title>
+    <title>NoFap Tracker - Advanced Version</title>
     <style>
-        /* Basic Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #4e4e4e, #f2f2f2);
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        .container {
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: #333;
         }
 
-        .login-box {
-            background: rgba(255, 255, 255, 0.8);
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #5b5b5b;
+            margin-bottom: 20px;
+        }
+
+        .counter h2 {
+            font-size: 1.2em;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .day-count {
+            font-size: 3em;
+            color: #4CAF50;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .start-btn, .new-quote-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .start-btn:hover, .new-quote-btn:hover {
+            background-color: #45a049;
+        }
+
+        .quote-box, .benefit-box, .progress-bar-box {
+            margin-top: 30px;
+            background-color: #f1f1f1;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 300px;
+            font-style: italic;
         }
 
-        .login-box button {
-            background-color: #4285F4;
-            border: none;
-            color: white;
-            padding: 15px;
+        #quote {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        #author {
+            font-size: 1em;
+            color: #777;
+        }
+
+        .benefit-box {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .progress-bar {
             width: 100%;
-            font-size: 18px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .home-page {
-            display: none;
-            text-align: center;
+            height: 10px;
+            background-color: #ddd;
             margin-top: 20px;
-        }
-
-        .file-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .file-list button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #34A853;
-            border: none;
-            color: white;
-            cursor: pointer;
             border-radius: 5px;
         }
 
-        iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+        #personalized-message {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        #achievements {
+            font-size: 1.1em;
+            color: #4CAF50;
             margin-top: 30px;
         }
+
+        #daily-challenge {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 20px;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-style: normal;
+        }
     </style>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
-
 <body>
-
     <div class="container">
-        <div class="login-box" id="login-box">
-            <button id="login-btn">Login with Google</button>
+        <h1>NoFap Tracker - Advanced Version</h1>
+        <div class="counter">
+            <h2>Time Since Your Last Relapse</h2>
+            <div id="time-count" class="day-count">0</div>
         </div>
-        <div class="home-page" id="home-page">
-            <h2>Welcome to File Storage</h2>
-            <button id="connect-drive">Connect to Google Drive</button>
-            <div class="file-list" id="file-list"></div>
+        <button id="start-btn" class="start-btn">Start Your Journey</button>
+        <div id="quote-box" class="quote-box" style="display: none;">
+            <p id="quote">"The greatest glory in living lies not in never falling, but in rising every time we fall."</p>
+            <p id="author">- Nelson Mandela</p>
         </div>
+        <div id="benefit-box" class="benefit-box" style="display: none;">
+            <p id="benefit">Day 1: No major change. Just keep going!</p>
+        </div>
+        <div class="progress-bar-box">
+            <div id="progress-bar" class="progress-bar">
+                <div id="progress" class="progress"></div>
+            </div>
+        </div>
+        <div id="personalized-message" style="display: none;"></div>
+        <div id="achievements" style="display: none;"></div>
+        <div id="daily-challenge" style="display: none;">Your daily challenge: Stay strong, focus on your goals, and take one step at a time.</div>
+        <button id="new-quote-btn" class="new-quote-btn">Get New Motivation</button>
     </div>
 
     <script>
-        let userAuthToken;
-        let gapiClient;
-
-        // Initialize the Google API Client
-        function initClient() {
-            gapi.client.init({
-                apiKey: 'AIzaSyDe5E6y-kGMU4c_3FVoHRINOUBb_aRl2Lk', 
-                clientId: '311050151646-eeakd0duojqe4cb2hcckek3bfovp710m.apps.googleusercontent.com',
-                scope: 'https://www.googleapis.com/auth/drive.readonly',
-                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-            }).then(function () {
-                // Listen for sign-in state changes
-                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-            });
-        }
-
-        // Sign In
-        function handleAuthClick() {
-            gapi.auth2.getAuthInstance().signIn();
-        }
-
-        // Update the UI based on sign-in state
-        function updateSigninStatus(isSignedIn) {
-            if (isSignedIn) {
-                // Show Home page
-                document.getElementById('login-box').style.display = 'none';
-                document.getElementById('home-page').style.display = 'block';
-                userAuthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+        let startButton = document.getElementById("start-btn");
+        let timeCount = document.getElementById("time-count");
+        let quoteBox = document.getElementById("quote-box");
+        let benefitBox = document.getElementById("benefit-box");
+        let progress = document.getElementById("progress");
+        let personalizedMessage = document.getElementById("personalized-message");
+        let achievements = document.getElementById("achievements");
+        let dailyChallenge = document.getElementById("daily-challenge");
+        let newQuoteButton = document.getElementById("new-quote-btn");
+        let quotes = [
+            {
+                quote: "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+                author: "Nelson Mandela"
+            },
+            {
+                quote: "It does not matter how slowly you go as long as you do not stop.",
+                author: "Confucius"
+            },
+            {
+                quote: "Keep your face always toward the sunshine—and shadows will fall behind you.",
+                author: "Walt Whitman"
+            },
+            {
+                quote: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+                author: "Winston Churchill"
+            },
+            {
+                quote: "You have to be willing to fail in order to succeed.",
+                author: "Unknown"
             }
-        }
+        ];
 
-        // Connect to Google Drive
-        function connectToDrive() {
-            gapi.client.drive.files.list({
-                pageSize: 10,
-                fields: "nextPageToken, files(id, name)"
-            }).then(function (response) {
-                const files = response.result.files;
-                const fileListDiv = document.getElementById('file-list');
-                fileListDiv.innerHTML = '';
-                if (files && files.length > 0) {
-                    files.forEach(function (file) {
-                        const fileItem = document.createElement('div');
-                        fileItem.innerHTML = `<p>${file.name}</p><button onclick="viewFile('${file.id}')">View</button>`;
-                        fileListDiv.appendChild(fileItem);
-                    });
-                } else {
-                    fileListDiv.innerHTML = 'No files found in your Google Drive.';
+        let benefits = [
+            "Day 1: No major change. Just keep going!",
+            "Day 2-3: Increased focus and mental clarity.",
+            "Day 7: Improved energy levels and mood.",
+            "Day 10: More confidence and less anxiety.",
+            "Day 21: Enhanced productivity and self-discipline.",
+            "Day 30: Greater sense of well-being and peace.",
+            "Day 60: Stronger willpower and emotional stability.",
+            "Day 90: Feel more in control and motivated to succeed."
+        ];
+
+        let achievementsList = [
+            "Achieved 1 day streak!",
+            "Achieved 7 days streak!",
+            "Achieved 30 days streak!",
+            "Achieved 90 days streak!"
+        ];
+
+        let startDate = null;
+        let timer;
+
+        startButton.addEventListener("click", function() {
+            startDate = new Date();
+            localStorage.setItem("startDate", startDate.toISOString());
+            startButton.style.display = "none";
+            quoteBox.style.display = "block";
+            benefitBox.style.display = "block";
+            personalizedMessage.style.display = "block";
+            updateTimeCount();
+        });
+
+        newQuoteButton.addEventListener("click", function() {
+            let randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById("quote").textContent = `"${randomQuote.quote}"`;
+            document.getElementById("author").textContent = `- ${randomQuote.author}`;
+        });
+
+        function updateTimeCount() {
+            timer = setInterval(function() {
+                let storedDate = localStorage.getItem("startDate");
+                if (storedDate) {
+                    startDate = new Date(storedDate);
+                    let currentDate = new Date();
+                    let elapsedTime = currentDate - startDate;
+
+                    // Convert milliseconds to days, hours, minutes, seconds, and milliseconds
+                    let days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
+                    let hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+                    let seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+                    let milliseconds = Math.floor((elapsedTime % 1000));
+
+                    timeCount.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`;
+
+                    // Update benefits based on days
+                    let benefitIndex = Math.min(days, benefits.length - 1);
+                    document.getElementById("benefit").textContent = benefits[benefitIndex];
+
+                    // Update progress bar
+                    let progressPercentage = Math.min(days / 90, 1) * 100; // Max 90 days for now
+                    progress.style.width = `${progressPercentage}%`;
+
+                    // Personalized message based on days
+                    personalizedMessage.textContent = `Keep going, Day ${days}! You're doing amazing!`;
+
+                    // Achievements
+                    achievements.innerHTML = "";
+                    if (days >= 1) achievements.innerHTML += `<p>${achievementsList[0]}</p>`;
+                    if (days >= 7) achievements.innerHTML += `<p>${achievementsList[1]}</p>`;
+                    if (days >= 30) achievements.innerHTML += `<p>${achievementsList[2]}</p>`;
+                    if (days >= 90) achievements.innerHTML += `<p>${achievementsList[3]}</p>`;
                 }
-            });
+            }, 100); // Update every 100ms (for precision)
         }
 
-        // View the file (PDF viewer)
-        function viewFile(fileId) {
-            const fileURL = `https://drive.google.com/file/d/${fileId}/preview`;
-            const iframe = document.createElement('iframe');
-            iframe.src = fileURL;
-            document.body.appendChild(iframe);
+        // To ensure the timer starts as soon as the page is loaded if the user has started before
+        if (localStorage.getItem("startDate")) {
+            updateTimeCount();
         }
-
-        // Load the API client
-        function loadAuthClient() {
-            gapi.load('client:auth2', initClient);
-        }
-
-        // Event Listeners
-        document.getElementById('login-btn').addEventListener('click', handleAuthClick);
-        document.getElementById('connect-drive').addEventListener('click', connectToDrive);
-
-        // Load the client when page is ready
-        window.onload = loadAuthClient;
     </script>
-
 </body>
-
 </html>
