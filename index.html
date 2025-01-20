@@ -1,270 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoFap Tracker - Advanced Version</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Video App</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --button-bg: #007BFF;
+      --card-bg: #f9f9f9;
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #333;
-        }
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --button-bg: #0d6efd;
+      --card-bg: #1e1e1e;
+    }
 
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-        h1 {
-            font-size: 2.5em;
-            color: #5b5b5b;
-            margin-bottom: 20px;
-        }
+    h1 {
+      margin-bottom: 20px;
+    }
 
-        .counter h2 {
-            font-size: 1.2em;
-            color: #777;
-            margin-bottom: 10px;
-        }
+    .controls, .comment-section, .saved-videos {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
 
-        .day-count {
-            font-size: 3em;
-            color: #4CAF50;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+    input, select, textarea, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid var(--text-color);
+      border-radius: 5px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      transition: all 0.3s;
+    }
 
-        .start-btn, .new-quote-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
+    button {
+      background-color: var(--button-bg);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+    }
 
-        .start-btn:hover, .new-quote-btn:hover {
-            background-color: #45a049;
-        }
+    button:hover {
+      transform: scale(1.05);
+      background-color: #0056b3;
+    }
 
-        .quote-box, .benefit-box, .progress-bar-box {
-            margin-top: 30px;
-            background-color: #f1f1f1;
-            padding: 20px;
-            border-radius: 10px;
-            font-style: italic;
-        }
+    .video-container {
+      margin: 20px 0;
+      width: 100%;
+      max-width: 800px;
+      background-color: var(--card-bg);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        #quote {
-            font-size: 1.2em;
-            color: #555;
-            margin-bottom: 10px;
-        }
+    video, iframe {
+      width: 100%;
+      border-radius: 10px;
+    }
 
-        #author {
-            font-size: 1em;
-            color: #777;
-        }
+    .saved-item {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--text-color);
+      border-radius: 5px;
+    }
 
-        .benefit-box {
-            font-size: 1.1em;
-            color: #555;
-        }
+    .icon-bar {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
 
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #ddd;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
+    .icon {
+      font-size: 24px;
+      padding: 10px;
+      border: 2px solid var(--text-color);
+      background-color: var(--card-bg);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
 
-        .progress {
-            height: 100%;
-            background-color: #4CAF50;
-            border-radius: 5px;
-        }
-
-        #personalized-message {
-            font-size: 1.2em;
-            color: #333;
-            margin-top: 20px;
-        }
-
-        #achievements {
-            font-size: 1.1em;
-            color: #4CAF50;
-            margin-top: 30px;
-        }
-
-        #daily-challenge {
-            font-size: 1.2em;
-            color: #333;
-            margin-top: 20px;
-            background-color: #f1f1f1;
-            padding: 15px;
-            border-radius: 5px;
-            font-style: normal;
-        }
-    </style>
+    .icon:hover {
+      background-color: var(--button-bg);
+      color: white;
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>NoFap Tracker - Advanced Version</h1>
-        <div class="counter">
-            <h2>Time Since Your Last Relapse</h2>
-            <div id="time-count" class="day-count">0</div>
-        </div>
-        <button id="start-btn" class="start-btn">Start Your Journey</button>
-        <div id="quote-box" class="quote-box" style="display: none;">
-            <p id="quote">"The greatest glory in living lies not in never falling, but in rising every time we fall."</p>
-            <p id="author">- Nelson Mandela</p>
-        </div>
-        <div id="benefit-box" class="benefit-box" style="display: none;">
-            <p id="benefit">Day 1: No major change. Just keep going!</p>
-        </div>
-        <div class="progress-bar-box">
-            <div id="progress-bar" class="progress-bar">
-                <div id="progress" class="progress"></div>
-            </div>
-        </div>
-        <div id="personalized-message" style="display: none;"></div>
-        <div id="achievements" style="display: none;"></div>
-        <div id="daily-challenge" style="display: none;">Your daily challenge: Stay strong, focus on your goals, and take one step at a time.</div>
-        <button id="new-quote-btn" class="new-quote-btn">Get New Motivation</button>
+  <h1>Interactive Video Player App</h1>
+
+  <!-- Video Player -->
+  <div class="video-container">
+    <video id="videoPlayer" controls hidden>
+      <source src="" type="">
+      Your browser does not support the video tag.
+    </video>
+    <iframe id="iframePlayer" hidden allowfullscreen></iframe>
+    <div class="controls">
+      <input type="file" id="fileInput" accept="video/*">
+      <input type="text" id="linkInput" placeholder="Paste video link">
+      <select id="categorySelect">
+        <option value="" disabled selected>Select Category</option>
+        <option value="Education">📘 Education</option>
+        <option value="Entertainment">🎭 Entertainment</option>
+        <option value="Music">🎵 Music</option>
+        <option value="Sports">⚽ Sports</option>
+      </select>
+      <button onclick="playFromLink()">Play Video</button>
+      <button onclick="saveVideo()">Save Video</button>
     </div>
+  </div>
 
-    <script>
-        let startButton = document.getElementById("start-btn");
-        let timeCount = document.getElementById("time-count");
-        let quoteBox = document.getElementById("quote-box");
-        let benefitBox = document.getElementById("benefit-box");
-        let progress = document.getElementById("progress");
-        let personalizedMessage = document.getElementById("personalized-message");
-        let achievements = document.getElementById("achievements");
-        let dailyChallenge = document.getElementById("daily-challenge");
-        let newQuoteButton = document.getElementById("new-quote-btn");
-        let quotes = [
-            {
-                quote: "The greatest glory in living lies not in never falling, but in rising every time we fall.",
-                author: "Nelson Mandela"
-            },
-            {
-                quote: "It does not matter how slowly you go as long as you do not stop.",
-                author: "Confucius"
-            },
-            {
-                quote: "Keep your face always toward the sunshine—and shadows will fall behind you.",
-                author: "Walt Whitman"
-            },
-            {
-                quote: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
-                author: "Winston Churchill"
-            },
-            {
-                quote: "You have to be willing to fail in order to succeed.",
-                author: "Unknown"
-            }
-        ];
+  <!-- Saved Videos -->
+  <div class="saved-videos">
+    <h2>Saved Videos</h2>
+    <div id="savedVideos"></div>
+  </div>
 
-        let benefits = [
-            "Day 1: No major change. Just keep going!",
-            "Day 2-3: Increased focus and mental clarity.",
-            "Day 7: Improved energy levels and mood.",
-            "Day 10: More confidence and less anxiety.",
-            "Day 21: Enhanced productivity and self-discipline.",
-            "Day 30: Greater sense of well-being and peace.",
-            "Day 60: Stronger willpower and emotional stability.",
-            "Day 90: Feel more in control and motivated to succeed."
-        ];
+  <!-- Comment Section -->
+  <div class="comment-section">
+    <h2>Notes</h2>
+    <textarea id="noteInput" placeholder="Write your notes here..."></textarea>
+    <button onclick="saveNote()">Save Note</button>
+  </div>
 
-        let achievementsList = [
-            "Achieved 1 day streak!",
-            "Achieved 7 days streak!",
-            "Achieved 30 days streak!",
-            "Achieved 90 days streak!"
-        ];
+  <!-- Icon Bar -->
+  <div class="icon-bar">
+    <div class="icon" onclick="toggleTheme()">🌞</div>
+    <div class="icon" onclick="clearSavedVideos()">🗑️</div>
+    <div class="icon" onclick="showInfo()">ℹ️</div>
+  </div>
 
-        let startDate = null;
-        let timer;
+  <script>
+    const videoPlayer = document.getElementById('videoPlayer');
+    const iframePlayer = document.getElementById('iframePlayer');
+    const linkInput = document.getElementById('linkInput');
+    const categorySelect = document.getElementById('categorySelect');
+    const savedVideosContainer = document.getElementById('savedVideos');
+    const noteInput = document.getElementById('noteInput');
+    let theme = "light";
 
-        startButton.addEventListener("click", function() {
-            startDate = new Date();
-            localStorage.setItem("startDate", startDate.toISOString());
-            startButton.style.display = "none";
-            quoteBox.style.display = "block";
-            benefitBox.style.display = "block";
-            personalizedMessage.style.display = "block";
-            updateTimeCount();
-        });
+    // Toggle Day/Night Theme
+    function toggleTheme() {
+      theme = theme === "light" ? "dark" : "light";
+      document.documentElement.setAttribute('data-theme', theme);
+    }
 
-        newQuoteButton.addEventListener("click", function() {
-            let randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById("quote").textContent = `"${randomQuote.quote}"`;
-            document.getElementById("author").textContent = `- ${randomQuote.author}`;
-        });
+    // Play video from link or file
+    function playFromLink() {
+      const link = linkInput.value.trim();
+      if (!link) return alert('Enter a valid video link.');
+      if (link.includes('youtube.com') || link.includes('youtu.be')) {
+        const videoId = link.split('v=')[1]?.split('&')[0] || link.split('/')[3];
+        iframePlayer.src = `https://www.youtube.com/embed/${videoId}`;
+        iframePlayer.hidden = false;
+        videoPlayer.hidden = true;
+      } else {
+        videoPlayer.src = link;
+        videoPlayer.hidden = false;
+        iframePlayer.hidden = true;
+      }
+    }
 
-        function updateTimeCount() {
-            timer = setInterval(function() {
-                let storedDate = localStorage.getItem("startDate");
-                if (storedDate) {
-                    startDate = new Date(storedDate);
-                    let currentDate = new Date();
-                    let elapsedTime = currentDate - startDate;
+    // Save video
+    function saveVideo() {
+      const link = linkInput.value.trim();
+      const category = categorySelect.value;
+      if (!link || !category) return alert('Provide a link and select a category.');
 
-                    // Convert milliseconds to days, hours, minutes, seconds, and milliseconds
-                    let days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
-                    let hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    let minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
-                    let seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
-                    let milliseconds = Math.floor((elapsedTime % 1000));
+      const savedVideos = JSON.parse(localStorage.getItem('videos')) || [];
+      savedVideos.push({ link, category });
+      localStorage.setItem('videos', JSON.stringify(savedVideos));
+      renderSavedVideos(savedVideos);
+      alert('Video saved!');
+    }
 
-                    timeCount.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`;
+    // Render saved videos
+    function renderSavedVideos(videos) {
+      savedVideosContainer.innerHTML = videos
+        .map(video => `
+          <div class="saved-item">
+            <strong>Category:</strong> ${video.category}<br>
+            <a href="${video.link}" target="_blank">Play Video</a>
+          </div>
+        `)
+        .join('');
+    }
 
-                    // Update benefits based on days
-                    let benefitIndex = Math.min(days, benefits.length - 1);
-                    document.getElementById("benefit").textContent = benefits[benefitIndex];
+    // Save a note
+    function saveNote() {
+      const note = noteInput.value.trim();
+      if (!note) return alert('Note cannot be empty.');
+      const notes = JSON.parse(localStorage.getItem('notes')) || [];
+      notes.push(note);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      noteInput.value = '';
+      alert('Note saved!');
+    }
 
-                    // Update progress bar
-                    let progressPercentage = Math.min(days / 90, 1) * 100; // Max 90 days for now
-                    progress.style.width = `${progressPercentage}%`;
+    // Clear saved videos
+    function clearSavedVideos() {
+      localStorage.removeItem('videos');
+      renderSavedVideos([]);
+      alert('All videos cleared.');
+    }
 
-                    // Personalized message based on days
-                    personalizedMessage.textContent = `Keep going, Day ${days}! You're doing amazing!`;
+    // Display app info
+    function showInfo() {
+      alert('Interactive Video Player App\nFeatures: Day/Night mode, Save videos, Notes, Categories.');
+    }
 
-                    // Achievements
-                    achievements.innerHTML = "";
-                    if (days >= 1) achievements.innerHTML += `<p>${achievementsList[0]}</p>`;
-                    if (days >= 7) achievements.innerHTML += `<p>${achievementsList[1]}</p>`;
-                    if (days >= 30) achievements.innerHTML += `<p>${achievementsList[2]}</p>`;
-                    if (days >= 90) achievements.innerHTML += `<p>${achievementsList[3]}</p>`;
-                }
-            }, 100); // Update every 100ms (for precision)
-        }
-
-        // To ensure the timer starts as soon as the page is loaded if the user has started before
-        if (localStorage.getItem("startDate")) {
-            updateTimeCount();
-        }
-    </script>
+    // Load saved videos on page load
+    window.onload = () => {
+      const savedVideos = JSON.parse(localStorage.getItem('videos')) || [];
+      renderSavedVideos(savedVideos);
+    };
+  </script>
 </body>
 </html>
