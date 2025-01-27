@@ -4,13 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Devara Video Stream</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        #video-container {
+            position: relative;
+            max-width: 720px;
+            margin: auto;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #000;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #333;
+            border-radius: 0 0 8px 8px;
+        }
+        .button, .speed-control {
+            cursor: pointer;
+            color: #fff;
+            background: #444;
+            border: none;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+        }
+        .button:hover, .speed-control:hover {
+            background: #555;
+        }
+    </style>
 </head>
 <body>
-    <h1>Devara Video Stream</h1>
-    <iframe src="https://drive.google.com/file/d/19dZJpjSW-GKv7WCO_6wJg8_m0-MX1n76/preview" 
-            width="640" 
-            height="360" 
-            allow="autoplay">
-    </iframe>
+    <h1>Devara Video Player</h1>
+    <div id="video-container">
+        <video id="video" src="https://drive.google.com/file/d/19dZJpjSW-GKv7WCO_6wJg8_m0-MX1n76/preview" controls></video>
+        <div class="controls">
+            <button id="play-pause" class="button">Play</button>
+            <select id="speed-control" class="speed-control">
+                <!-- Default options will be added dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const playPauseBtn = document.getElementById('play-pause');
+        const speedControl = document.getElementById('speed-control');
+
+        // Play/Pause functionality
+        playPauseBtn.addEventListener('click', () => {
+            if (video.paused || video.ended) {
+                video.play();
+                playPauseBtn.textContent = 'Pause';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = 'Play';
+            }
+        });
+
+        // Function to detect device type
+        function getDeviceType() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.includes('android')) return 'android';
+            if (userAgent.includes('tv') || userAgent.includes('smart-tv') || userAgent.includes('tizen')) return 'tv';
+            return 'computer';
+        }
+
+        // Dynamically update speed options based on device type
+        function setSpeedOptions(deviceType) {
+            let options;
+            if (deviceType === 'android') {
+                options = [
+                    { value: '0.75', label: '0.75x' },
+                    { value: '1', label: '1x (Normal)' },
+                    { value: '1.25', label: '1.25x' },
+                    { value: '1.5', label: '1.5x' },
+                ];
+            } else if (deviceType === 'tv') {
+                options = [
+                    { value: '0.5', label: '0.5x' },
+                    { value: '1', label: '1x (Normal)' },
+                    { value: '2', label: '2x' },
+                ];
+            } else {
+                // Default for computers
+                options = [
+                    { value: '0.5', label: '0.5x' },
+                    { value: '1', label: '1x (Normal)' },
+                    { value: '1.5', label: '1.5x' },
+                    { value: '2', label: '2x' },
+                    { value: '3', label: '3x' },
+                ];
+            }
+
+            // Populate the speed control dropdown
+            speedControl.innerHTML = '';
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.value;
+                opt.textContent = option.label;
+                speedControl.appendChild(opt);
+            });
+
+            // Set default speed control behavior
+            speedControl.addEventListener('change', () => {
+                video.playbackRate = parseFloat(speedControl.value);
+            });
+        }
+
+        // Initialize player with device-specific settings
+        const deviceType = getDeviceType();
+        setSpeedOptions(deviceType);
+    </script>
 </body>
 </html>
